@@ -1,12 +1,12 @@
 const express = require('express');
-const sequelize = require('./db');
+const {testConnection} = require('./db');
 
 const app = express();
-app.use(express.json());
+testConnection()
 
-sequelize.authenticate()
-  .then(() => console.log("¡Te conectaste!"))
-  .catch(err => console.error("Intenta otra vez:", err));
+app.get('/', (req, res) => {
+    res.send('¡Te conectaste!');
+});
 
 app.listen(5432, () => {
   console.log("Klk");
