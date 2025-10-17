@@ -32,14 +32,7 @@ if (process.env.DATABASE_URL) {
     console.log("DATABASE_URL no encontrada. Conectando con variables separadas.");
     // 3. Conexión con parámetros separados (Uso de tus variables locales actuales)
     sequelize = new Sequelize(
-        process.env.DB_NAME,
-        process.env.DB_USER,
-        process.env.DB_PASSWORD,
-        {
-            ...baseOptions,
-            host: process.env.DB_HOST || "localhost",
-            port: process.env.DB_PORT || 5432,
-        }
+        process.env.DATABASE_URL
     );
 }
 
