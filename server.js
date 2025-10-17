@@ -38,6 +38,7 @@ async function testConnection() {
   }
 }
 testConnection();
+module.exports = {sequelize, testConnection};
 
 // --- DEFINIR MODELO (ejemplo: tareas) ---
 // Defino el modelo 'Tarea' para la tabla 'tareas'
