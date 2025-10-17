@@ -8,24 +8,40 @@ const app = express();
 const port = process.env.SERVER_PORT || 3000;
 
 // --- CONFIGURACIÓN DE SEQUELIZE ---
-// Configuro mi conexión a la base de datos PostgreSQL usando Sequelize
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST || "localhost",
-    port: process.env.DB_PORT || 5432,
+
+// 1. Opciones base (Host/Port/User/Pass NO están aquí)
+const baseOptions = {
     dialect: "postgres",
     logging: false,
     dialectOptions: {
-      ssl:
-        process.env.DB_SSL === "true"
-          ? { require: true, rejectUnauthorized: false }
-          : false,
+        ssl:
+            process.env.DB_SSL === "true"
+                ? { require: true, rejectUnauthorized: false }
+                : false,
     },
-  }
-);
+};
+
+let sequelize;
+
+// DETECCIÓN INTELIGENTE: Si existe DATABASE_URL, úsala (esto será cierto en Railway)
+if (process.env.DATABASE_URL) {
+    console.log("Detectada DATABASE_URL. Conectando con URL completa.");
+    // 2. Conexión con una sola URL (Ideal para entornos de hosting como Railway)
+    sequelize = new Sequelize(process.env.DATABASE_URL, baseOptions);
+} else {
+    console.log("DATABASE_URL no encontrada. Conectando con variables separadas.");
+    // 3. Conexión con parámetros separados (Uso de tus variables locales actuales)
+    sequelize = new Sequelize(
+        process.env.DB_NAME,
+        process.env.DB_USER,
+        process.env.DB_PASSWORD,
+        {
+            ...baseOptions,
+            host: process.env.DB_HOST || "localhost",
+            port: process.env.DB_PORT || 5432,
+        }
+    );
+}
 
 // --- PROBAR CONEXIÓN ---
 // Verifico que la conexión a la base de datos sea exitosa
